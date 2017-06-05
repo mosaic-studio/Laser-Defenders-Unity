@@ -6,6 +6,11 @@ public class PlayerController : MonoBehaviour {
 
     public float maxSpeed = 5.0f;
     public float padding = 1f;
+    public float laserShootSpeed;
+    public float firingRate = 0.2f;
+    public float health = 300f;
+
+    public GameObject laserShoot;
 
     float xmin;
     float xmax;
@@ -22,6 +27,14 @@ public class PlayerController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         Move();
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            InvokeRepeating("Fire", 0.000001f, firingRate);
+        }
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            CancelInvoke("Fire");
+        }
 	}
 
     void Move()
@@ -31,5 +44,26 @@ public class PlayerController : MonoBehaviour {
 
         float newX = Mathf.Clamp(transform.position.x, xmin, xmax);
         transform.position = new Vector3(newX, transform.position.y, transform.position.z);
+    }
+
+    void Fire()
+    {
+        Vector3 startPosition = transform.position + new Vector3(0, 1, 0);
+        GameObject shoot = Instantiate(laserShoot, startPosition, Quaternion.identity) as GameObject;
+        shoot.GetComponent<Rigidbody2D>().velocity = new Vector3(0, laserShootSpeed);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        LaserShoot laser = collision.gameObject.GetComponent<LaserShoot>();
+        if (laser)
+        {
+            health -= laser.getDamage();
+            laser.Hit();
+            if (health <= 0)
+            {
+                Destroy(gameObject);
+            }
+        }
     }
 }
