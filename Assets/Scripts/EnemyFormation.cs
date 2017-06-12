@@ -3,13 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyFormation : MonoBehaviour {
+    public GameObject laserShoot;
     public float health = 150f;
     public float laserShootSpeed = 10;
     public float firingRate = 0.2f;
-    public GameObject laserShoot;
     public float shootsPerSeconds = 0.5f;
+	public int scoreValue = 150;
+	public AudioClip shootSound;
+	public AudioClip explosion;
 
-    void Update()
+	private ScoreKeeper score;
+
+	private void Start()
+	{
+		score = GameObject.Find("Score").GetComponent<ScoreKeeper>();
+	}
+
+	void Update()
     {
         float probability = Time.deltaTime * shootsPerSeconds;
         if(Random.value < probability)
@@ -20,10 +30,11 @@ public class EnemyFormation : MonoBehaviour {
 
     void Fire()
     {
-        Vector3 startPosition = transform.position + new Vector3(0, -1, 0);
-        GameObject shoot = Instantiate(laserShoot, startPosition, Quaternion.identity) as GameObject;
+        // Vector3 startPosition = transform.position + new Vector3(0, -1, 0);
+        GameObject shoot = Instantiate(laserShoot, transform.position, Quaternion.identity) as GameObject;
         shoot.GetComponent<Rigidbody2D>().velocity = new Vector3(0, -laserShootSpeed);
-    }
+		AudioSource.PlayClipAtPoint(shootSound, transform.position);
+	}
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -34,8 +45,10 @@ public class EnemyFormation : MonoBehaviour {
             laser.Hit();
             if (health <= 0)
             {
-                Destroy(gameObject);
-            }
+				score.Score(scoreValue);
+				Destroy(gameObject);
+				AudioSource.PlayClipAtPoint(explosion, transform.position);
+			}
         }
     }
 

@@ -9,8 +9,9 @@ public class PlayerController : MonoBehaviour {
     public float laserShootSpeed;
     public float firingRate = 0.2f;
     public float health = 300f;
+	public AudioClip shootSound;
 
-    public GameObject laserShoot;
+	public GameObject laserShoot;
 
     float xmin;
     float xmax;
@@ -51,7 +52,8 @@ public class PlayerController : MonoBehaviour {
         Vector3 startPosition = transform.position + new Vector3(0, 1, 0);
         GameObject shoot = Instantiate(laserShoot, startPosition, Quaternion.identity) as GameObject;
         shoot.GetComponent<Rigidbody2D>().velocity = new Vector3(0, laserShootSpeed);
-    }
+		AudioSource.PlayClipAtPoint(shootSound, transform.position);
+	}
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -62,8 +64,15 @@ public class PlayerController : MonoBehaviour {
             laser.Hit();
             if (health <= 0)
             {
-                Destroy(gameObject);
+				Die();
             }
         }
     }
+
+	private void Die()
+	{
+		Destroy(gameObject);
+		LevelManager man = GameObject.Find("LevelManager").GetComponent<LevelManager>();
+		man.LoadLevel("Win Screen");
+	}
 }
