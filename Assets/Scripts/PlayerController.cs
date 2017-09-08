@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour {
     public float health = 300f;
 	public AudioClip shootSound;
 
+	public GameObject explosionParticle;
 	public GameObject laserShoot;
 
     float xmin;
@@ -72,7 +73,8 @@ public class PlayerController : MonoBehaviour {
 	private void Die()
 	{
 		Destroy(gameObject);
-		LevelManager man = GameObject.Find("LevelManager").GetComponent<LevelManager>();
-		man.LoadLevel("Win Screen");
+		Instantiate(explosionParticle, transform.position, transform.rotation);
+		// LevelManager man = GameObject.Find("LevelManager").GetComponent<LevelManager>();
+		// man.LoadLevel("Win Screen");
 	}
 }

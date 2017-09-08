@@ -14,6 +14,8 @@ public class EnemyFormation : MonoBehaviour {
 
 	private ScoreKeeper score;
 
+	public GameObject explosionParticle;
+
 	private void Start()
 	{
 		score = GameObject.Find("Score").GetComponent<ScoreKeeper>();
@@ -47,6 +49,7 @@ public class EnemyFormation : MonoBehaviour {
             {
 				score.Score(scoreValue);
 				Destroy(gameObject);
+	            Instantiate(explosionParticle, transform.position, transform.rotation);
 				AudioSource.PlayClipAtPoint(explosion, transform.position);
 			}
         }
